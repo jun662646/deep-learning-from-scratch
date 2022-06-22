@@ -2,10 +2,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# データの作成
+# 创建数据
 x = np.arange(0, 6, 0.1)
 y = np.sin(x)
 
-# グラフの描画
+# 绘制图表
 plt.plot(x, y)
 plt.show()

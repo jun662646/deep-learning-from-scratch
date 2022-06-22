@@ -1,6 +1,7 @@
 # coding: utf-8
 import sys, os
-sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
+
+sys.path.append(os.pardir)  # 用于导入父目录文件的设置
 import numpy as np
 import matplotlib.pyplot as plt
 from dataset.mnist import load_mnist
@@ -10,11 +11,11 @@ from common.trainer import Trainer
 
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True)
 
-# 高速化のため訓練データの削減
+# 为了再现过拟合，减少学习数据
 x_train = x_train[:500]
 t_train = t_train[:500]
 
-# 検証データの分離
+# 隔离验证数据
 validation_rate = 0.20
 validation_num = int(x_train.shape[0] * validation_rate)
 x_train, t_train = shuffle_dataset(x_train, t_train)
@@ -35,12 +36,12 @@ def __train(lr, weight_decay, epocs=50):
     return trainer.test_acc_list, trainer.train_acc_list
 
 
-# ハイパーパラメータのランダム探索======================================
+# 超参数随机搜索======================================
 optimization_trial = 100
 results_val = {}
 results_train = {}
 for _ in range(optimization_trial):
-    # 探索したハイパーパラメータの範囲を指定===============
+    # 指定搜索的超参数范围===============
     weight_decay = 10 ** np.random.uniform(-8, -4)
     lr = 10 ** np.random.uniform(-6, -2)
     # ================================================
@@ -51,18 +52,18 @@ for _ in range(optimization_trial):
     results_val[key] = val_acc_list
     results_train[key] = train_acc_list
 
-# グラフの描画========================================================
+# 绘制图表========================================================
 print("=========== Hyper-Parameter Optimization Result ===========")
 graph_draw_num = 20
 col_num = 5
 row_num = int(np.ceil(graph_draw_num / col_num))
 i = 0
 
-for key, val_acc_list in sorted(results_val.items(), key=lambda x:x[1][-1], reverse=True):
-    print("Best-" + str(i+1) + "(val acc:" + str(val_acc_list[-1]) + ") | " + key)
+for key, val_acc_list in sorted(results_val.items(), key=lambda x: x[1][-1], reverse=True):
+    print("Best-" + str(i + 1) + "(val acc:" + str(val_acc_list[-1]) + ") | " + key)
 
-    plt.subplot(row_num, col_num, i+1)
-    plt.title("Best-" + str(i+1))
+    plt.subplot(row_num, col_num, i + 1)
+    plt.title("Best-" + str(i + 1))
     plt.ylim(0.0, 1.0)
     if i % 5: plt.yticks([])
     plt.xticks([])
